@@ -1,0 +1,95 @@
+/*问题7：最大子序列问题
+问题描述：给定一个序列，找到其中的子序列，要求子序列之和的值最大
+要求：时间复杂度为O(n)或是时间复杂度为O(NlogN) 
+*/
+#include<iostream>
+#include<stdio.h>
+using namespce std;
+//方法一：动态规划法 时间复杂度为O(n)
+int MaxSubseque(int A[],int size)
+{
+	int tmpsum = A[0];
+	int maxsum = A[0];
+	for(int i = 1;i < size;i++)
+	{
+		
+		if(tmpsum + A[i] > A[i])
+		{
+			tmpsum += A[i];
+		}else
+		{
+			tmpsum = A[i];
+		}
+
+		if(tmpsum > maxsum)
+		{
+			maxsum = tmpsum;
+		}
+	}
+	return maxsum;
+}
+//方法二：分治递归法 时间复杂度为O(logN)
+int MaxSubseque(int A[],int left,int right)
+{
+	if(left == right)
+	{
+		return A[left];
+	}else
+	{
+		int mid = (left + right)/2;
+		//递归实现子分治左右两部分的最大值
+		int maxleft = MaxSubseque(A,left,mid);
+		int maxright = MaxSubseque(A,mid+1,right);
+		//计算中间子序列的最大值
+		int maxrightpart = A[mid+1];
+		int tmp_maxsum = 0;
+		for(int i = mid+1;i <= right;i++)
+		{
+			tmp_maxsum += A[i];
+			if(tmp_maxsum > maxrightpart)
+			{
+				maxrightpart = tmp_maxsum;
+			}
+		}
+		int maxleftpart = A[mid];
+		tmp_maxsum = 0;
+		for(int i = mid;i >= left;i--)
+		{
+			tmp_maxsum += A[i];
+			if(tmp_maxsum > maxleftpart)
+			{
+				maxleftpart = tmp_maxsum;
+			}
+		}
+
+		//返回maxleft maxright 以及 maxleftpart+maxrightpart最大值
+		if(maxleft > maxright)
+		{
+			if(maxleft > maxleftpart + maxrightpart)
+			{
+				return maxleft;
+			}else
+			{
+				return maxleftpart + maxrightpart;
+			}
+		}else
+		{
+			if(maxright > maxleftpart + maxrightpart)
+			{
+				return maxright;
+			}else
+			{
+				return maxleftpart + maxrightpart;
+			}
+		}
+	}
+}
+
+int main()
+{
+int A[12] = {-6,2,-4,7,-5,3,-2,2,-6,-9,-10,-2};
+	cout <<"最大子序列值为"<< MaxSubseque(A,0,11) <<endl;
+	cout <<"最大子序列值为"<<MaxSubseque(A,12) <<endl;
+	system("pause");
+	return 0;
+}
